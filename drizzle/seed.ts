@@ -16,18 +16,18 @@ async function seedDatabase() {
     .values([
       {
         id: 1,
-        name: "Challenge 1",
-        description: "Description for Challenge 1",
+        name: "Pushup",
+        description: "Description for pushup",
       },
       {
         id: 2,
-        name: "Challenge 2",
-        description: "Description for Challenge 2",
+        name: "Pullup",
+        description: "Description for pullup",
       },
       {
         id: 3,
-        name: "Challenge 3",
-        description: "Description for Challenge 3",
+        name: "Deadlift",
+        description: "Description for deadlift",
       },
     ])
     .execute();
