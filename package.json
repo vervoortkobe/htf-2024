@@ -11,13 +11,15 @@
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.10",
     "@types/node": "^20.14.8",
-    "drizzle-kit": "^0.23.2"
+    "drizzle-kit": "^0.23.2",
+    "tsx": "^4.19.0"
   },
   "dependencies": {
     "@solidjs/router": "^0.14.1",
     "@solidjs/start": "^1.0.2",
     "better-sqlite3": "^11.0.0",
     "drizzle-orm": "^0.32.2",
+    "oslo": "^1.2.1",
     "solid-js": "^1.8.18",
     "vinxi": "^0.4.1"
   },
