@@ -1,0 +1,51 @@
+.game-area {
+  position: relative;
+  width: 100%;
+  height: 90vh;
+  overflow: hidden;
+  background-image: wheat;
+}
+
+.ball {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-color: #3498db;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.5s ease;
+  z-index: 50;
+}
+
+h1 {
+  font-size: 2em;
+}
+
+h2 {
+  color: #e74c3c;
+}
+
+button {
+  width: fit-content;
+}
+
+.game-container {
+  position: relative;
+  height: 100%;
+}
+
+.score-card {
+  z-index: 20;
+  position: absolute;
+  top: 0px;
+  left: 10px;
+  border: 1px solid black;
+  padding: 8px;
+  border-radius: 1rem;
+}
+
+.intro-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}

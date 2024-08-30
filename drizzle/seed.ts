@@ -16,29 +16,16 @@ async function seedDatabase() {
     .values([
       {
         id: 1,
-        name: "Pushup",
-        description: "Description for pushup",
-      },
-      {
-        id: 2,
-        name: "Pullup",
-        description: "Description for pullup",
-      },
-      {
-        id: 3,
-        name: "Deadlift",
-        description: "Description for deadlift",
+        name: "Reaction Speed Challenge",
+        description:
+          "A rigorous assessment of your reflexes and response time. In this exercise, your objective is to swiftly click on targets that appear on the screen at unpredictable intervals. The quicker and more accurately you respond, the better your performance will be. This challenge is designed to measure your reaction time and focus, offering valuable insights into your ability to respond under pressure. Are you prepared to demonstrate your precision and speed?",
       },
     ])
     .execute();
 
   await db
     .insert(UserChallenges)
-    .values([
-      { userId: 1, challengeId: 1, score: 95 },
-      { userId: 1, challengeId: 2, score: 88 },
-      { userId: 1, challengeId: 3, score: 78 },
-    ])
+    .values([{ userId: 1, challengeId: 1, score: 95 }])
     .execute();
 }
 

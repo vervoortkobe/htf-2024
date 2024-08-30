@@ -1,10 +1,10 @@
 "use server";
 import { redirect } from "@solidjs/router";
 import { useSession } from "vinxi/http";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db } from "./db";
 import { Argon2id } from "oslo/password";
-import { Challenges, Users } from "../../drizzle/schema";
+import { Challenges, UserChallenges, Users } from "../../drizzle/schema";
 
 const argon2id = new Argon2id();
 
@@ -85,7 +85,6 @@ export async function getUser() {
   const session = await getSession();
   const userId = session.data.userId;
   if (userId === undefined) throw redirect("/login");
-
   try {
     const user = db.select().from(Users).where(eq(Users.id, userId)).get();
     if (!user) throw redirect("/login");
@@ -97,4 +96,37 @@ export async function getUser() {
 
 export async function getChallenges() {
   return db.select().from(Challenges).all();
+}
+
+export async function getChallenge(challengeId: number) {
+  const user = await getUser();
+  return db
+    .select({
+      challengeId: Challenges.id,
+      challengeName: Challenges.name,
+      challengeDescription: Challenges.description,
+      userChallengeId: UserChallenges.challengeId,
+      score: UserChallenges.score,
+    })
+    .from(Challenges)
+    .leftJoin(
+      UserChallenges,
+      and(
+        eq(Challenges.id, UserChallenges.challengeId),
+        eq(UserChallenges.userId, user.id)
+      )
+    )
+    .where(eq(Challenges.id, challengeId))
+    .limit(1);
+}
+
+export async function upsertUserChallenge(challengeId: number, score: number) {
+  const user = await getUser();
+  await db
+    .insert(UserChallenges)
+    .values({ userId: user.id, challengeId, score })
+    .onConflictDoUpdate({
+      target: [UserChallenges.userId, UserChallenges.challengeId],
+      set: { score },
+    });
 }

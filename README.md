@@ -15,7 +15,7 @@ zetten, bevat deze repository een starter project in [SolidStart](https://start.
 
 ```
 npm run drizzle:migrate
-npm run drizzle:seed
+tsx drizzle/seed.ts
 npm run dev
 ```
 
@@ -37,7 +37,6 @@ Om de verschillende teams op een gelijkaardige manier te kunnen beoordelen, verw
 Hieronder vind je enkele uitbreidingen als suggestie of laat je eigen creativiteit de vrij loop gaan!
 
 - Cadetten moeten kunnen inloggen via externe providers zoals Google of Microsoft, waardoor ze eenvoudig en veilig toegang krijgen tot het systeem
-- Beheerders moeten via een overzichtelijk admin panel uitdagingen kunnen aanmaken, bewerken, en verwijderen, zodat zij eenvoudig het aanbod aan uitdagingen kunnen beheren.
 
 ## Beoordeling
 
