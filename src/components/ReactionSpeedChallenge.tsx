@@ -23,7 +23,7 @@ const Ball = ({ position, onClick }: BallProps) => {
       class="ball"
       style={{ left: `${position.left}vw`, top: `${position.top}vh` }}
       onClick={onClick}
-    ></div>
+    />
   );
 };
 
@@ -101,7 +101,7 @@ const ReactionSpeedChallenge = () => {
               </div>
             </>
           ) : (
-            <h2>Game Over! Your Score: {score()}</h2>
+            <h2>Time is up! Your Score: {score()}</h2>
           )}
         </div>
       ) : (

@@ -81,9 +81,13 @@ export async function logout() {
   throw redirect("/login");
 }
 
-export async function getUser() {
+async function getUserId() {
   const session = await getSession();
-  const userId = session.data.userId;
+  return session.data.userId;
+}
+
+export async function getUser() {
+  const userId = await getUserId();
   if (userId === undefined) throw redirect("/login");
   try {
     const user = db.select().from(Users).where(eq(Users.id, userId)).get();
@@ -121,10 +125,10 @@ export async function getChallenge(challengeId: number) {
 }
 
 export async function upsertUserChallenge(challengeId: number, score: number) {
-  const user = await getUser();
+  const userId = await getUserId();
   await db
     .insert(UserChallenges)
-    .values({ userId: user.id, challengeId, score })
+    .values({ userId: userId, challengeId, score })
     .onConflictDoUpdate({
       target: [UserChallenges.userId, UserChallenges.challengeId],
       set: { score },

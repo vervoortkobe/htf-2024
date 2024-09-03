@@ -18,7 +18,7 @@ async function seedDatabase() {
         id: 1,
         name: "Reaction Speed Challenge",
         description:
-          "A rigorous assessment of your reflexes and response time. In this exercise, your objective is to swiftly click on targets that appear on the screen at unpredictable intervals. The quicker and more accurately you respond, the better your performance will be. This challenge is designed to measure your reaction time and focus, offering valuable insights into your ability to respond under pressure. Are you prepared to demonstrate your precision and speed?",
+          "A rigorous assessment of your reflexes and response time. In this exercise, your objective is to swiftly click on blue dots that appear on the screen at unpredictable intervals. The quicker and more accurately you respond, the better your performance will be. This challenge is designed to measure your reaction time and focus, offering valuable insights into your ability to respond under pressure. Are you prepared to demonstrate your precision and speed?",
       },
     ])
     .execute();

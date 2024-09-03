@@ -13,10 +13,7 @@ export default function HomeRoute() {
         <Show when={challenges()} fallback={"Loading..."}>
           <div>
             {challenges()?.map((challenge) => (
-              <A
-                href="/reaction-speed-challenge"
-                style={{ color: "black", "text-decoration": "none" }}
-              >
+              <A href="/reaction-speed-challenge">
                 <ChallengeCard challenge={challenge} />
               </A>
             ))}
