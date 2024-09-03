@@ -2,6 +2,7 @@ import { A } from "@solidjs/router";
 import { createResource, Show } from "solid-js";
 import { getChallenges } from "~/api/server";
 import ChallengeCard from "~/components/ChallengeCard";
+import Container from "~/components/Container";
 import NavBar from "~/components/NavBar";
 
 export default function HomeRoute() {
@@ -9,7 +10,7 @@ export default function HomeRoute() {
   return (
     <>
       <NavBar />
-      <div class="w-full p-4 space-y-2">
+      <Container>
         <Show when={challenges()} fallback={"Loading..."}>
           <div>
             {challenges()?.map((challenge) => (
@@ -19,7 +20,7 @@ export default function HomeRoute() {
             ))}
           </div>
         </Show>
-      </div>
+      </Container>
     </>
   );
 }

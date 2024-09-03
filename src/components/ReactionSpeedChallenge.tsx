@@ -1,26 +1,27 @@
-import { action, createAsync, useAction } from "@solidjs/router";
+import { A, action, createAsync, useAction } from "@solidjs/router";
 import { createEffect, createSignal, onCleanup } from "solid-js";
 import { getChallenge, upsertUserChallenge as uUc } from "~/api/server";
 import { ChallengesMap } from "~/constants";
 import NavBar from "./NavBar";
-import "./ReactionSpeedChallenge.css";
+import "./ReactionSpeedChallenge.scss";
+import Container from "./Container";
 
 type Position = {
   top: number;
   left: number;
 };
 
-type BallProps = {
+type AsteroidProps = {
   position: Position;
   onClick: () => void;
 };
 
 export const upsertUserChallenge = action(uUc, "upsertUserChallenge");
 
-const Ball = ({ position, onClick }: BallProps) => {
+const Asteroid = ({ position, onClick }: AsteroidProps) => {
   return (
     <div
-      class="ball"
+      class="asteroid"
       style={{ left: `${position.left}vw`, top: `${position.top}vh` }}
       onClick={onClick}
     />
@@ -32,7 +33,7 @@ const ReactionSpeedChallenge = () => {
   const challenge = createAsync(() =>
     getChallenge(ChallengesMap.reactionSpeedChallenge)
   );
-  const [ball, setBall] = createSignal<{
+  const [asteroid, setAsteroid] = createSignal<{
     id: number;
     position: Position;
   } | null>(null);
@@ -41,11 +42,11 @@ const ReactionSpeedChallenge = () => {
   const [gameOver, setGameOver] = createSignal(false);
   const [isStarted, setIsStarted] = createSignal(false);
 
-  const generateBall = () => {
+  const generateAsteroid = () => {
     if (!gameOver()) {
-      const ballId = Math.random();
-      setBall({
-        id: ballId,
+      const asteroidId = Math.random();
+      setAsteroid({
+        id: asteroidId,
         position: { left: Math.random() * 90, top: Math.random() * 80 },
       });
     }
@@ -69,15 +70,15 @@ const ReactionSpeedChallenge = () => {
         clearInterval(timerInterval);
       });
 
-      generateBall();
+      generateAsteroid();
     }
   });
 
-  const handleBallClick = (id: number) => {
-    if (ball() && ball()?.id === id) {
-      setBall(null);
+  const handleAsteroidClick = (id: number) => {
+    if (asteroid() && asteroid()?.id === id) {
+      setAsteroid(null);
       setScore(score() + 1);
-      generateBall();
+      generateAsteroid();
     }
   };
 
@@ -92,26 +93,36 @@ const ReactionSpeedChallenge = () => {
                 <p>Time Left: {timeLeft()}s</p>
               </div>
               <div class="game-area">
-                {ball() && (
-                  <Ball
-                    position={ball()!.position}
-                    onClick={() => handleBallClick(ball()!.id)}
+                <div id="stars"></div>
+                <div id="stars2"></div>
+                <div id="stars3"></div>
+                {asteroid() && (
+                  <Asteroid
+                    position={asteroid()!.position}
+                    onClick={() => handleAsteroidClick(asteroid()!.id)}
                   />
                 )}
               </div>
             </>
           ) : (
-            <h2>Time is up! Your Score: {score()}</h2>
+            <div class="result">
+              <h2>Time is up! Your Score: {score()}</h2>
+              <A href="/">
+                <button>Return home</button>
+              </A>
+            </div>
           )}
         </div>
       ) : (
         <div class="intro-container">
           <NavBar />
-          <h1>{challenge()?.[0].challengeName}</h1>
-          <p>{challenge()?.[0].challengeDescription}</p>
-          <button type="button" onClick={() => setIsStarted(true)}>
-            Start
-          </button>
+          <Container>
+            <h1>{challenge()?.[0].challengeName}</h1>
+            <p>{challenge()?.[0].challengeDescription}</p>
+            <button type="button" onClick={() => setIsStarted(true)}>
+              Start
+            </button>
+          </Container>
         </div>
       )}
     </div>

@@ -1,13 +1,18 @@
 import { useSubmission, type RouteSectionProps } from "@solidjs/router";
 import { Show } from "solid-js";
 import { loginOrRegister } from "~/api";
+import Container from "~/components/Container";
 
 export default function LoginRoute(props: RouteSectionProps) {
   const loggingIn = useSubmission(loginOrRegister);
 
   return (
-    <main>
-      <img class="logo-login" src="../../logo_htf.webp" alt="Space Cadet Program" />
+    <Container>
+      <img
+        class="logo-login"
+        src="../../logo_htf.webp"
+        alt="Space Cadet Program"
+      />
       <h1>Space Cadet Program</h1>
       <form action={loginOrRegister} method="post" class="login-form">
         <input
@@ -26,11 +31,7 @@ export default function LoginRoute(props: RouteSectionProps) {
         </fieldset>
         <div class="input-container">
           <label for="username">Username</label>
-          <input
-            type="text"
-            name="username"
-            autocomplete="username"
-          />
+          <input type="text" name="username" autocomplete="username" />
         </div>
         <div class="input-container">
           <label for="password">Password</label>
@@ -40,13 +41,13 @@ export default function LoginRoute(props: RouteSectionProps) {
             autocomplete="current-password"
           />
         </div>
-        <button type="submit">Login</button>
+        <button id="login-button" type="submit">Login</button>
         <Show when={loggingIn.result}>
           <p style={{ color: "red" }} role="alert" id="error-message">
             {loggingIn.result!.message}
           </p>
         </Show>
       </form>
-    </main>
+    </Container>
   );
 }

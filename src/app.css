@@ -1,6 +1,7 @@
 body {
   font-family: Gordita, Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
     "Helvetica Neue", sans-serif;
+    overflow: hidden;
 }
 
 a {
@@ -8,9 +9,10 @@ a {
 }
 
 html {
-  background-color: #f0f4f8;
+  background-color: #0d0b0a;
   height: 100%;
   font-family: Arial, Helvetica, sans-serif;
+  color: white;
 }
 
 main {
@@ -29,12 +31,12 @@ main {
 
 h1 {
   font-size: 2rem;
-  color: #333;
+  color: white;
   margin-bottom: 20px;
 }
 
 .login-form {
-  background-color: #ffffff;
+  background-color: #1f1f1f;
   padding: 20px 40px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -50,14 +52,12 @@ fieldset {
 
 legend {
   font-size: 1.2rem;
-  color: #555;
   margin-bottom: 10px;
 }
 
 label {
   display: block;
   font-size: 1rem;
-  color: #555;
   margin-bottom: 10px;
 }
 
@@ -78,7 +78,6 @@ input[type="radio"] {
 }
 
 button {
-  width: 100%;
   padding: 10px;
   background-color: #007bff;
   color: #ffffff;
@@ -120,4 +119,8 @@ button:hover {
 a {
   color: black;
   text-decoration: none;
+}
+
+#login-button{
+  width: 100%;
 }

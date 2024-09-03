@@ -1,8 +1,8 @@
 # Step-by-Step Guide
 
-## Step 1: Create the Ball Component
+## Step 1: Create the Asteroid Component
 
-The first step is to create a reusable Ball component that represents the ball the user will click on. This component takes two props: position and onClick.
+The first step is to create a reusable Asteroid component that represents the asteroid the user will click on. This component takes two props: position and onClick.
 
 ```typescript
 type Position = {
@@ -10,15 +10,15 @@ type Position = {
   left: number;
 };
 
-type BallProps = {
+type AsteroidProps = {
   position: Position;
   onClick: () => void;
 };
 
-const Ball = ({ position, onClick }: BallProps) => {
+const Asteroid = ({ position, onClick }: AsteroidProps) => {
   return (
     <div
-      class="ball"
+      class="asteroid"
       style={{ left: `${position.left}vw`, top: `${position.top}vh` }}
       onClick={onClick}
     ></div>
@@ -26,15 +26,15 @@ const Ball = ({ position, onClick }: BallProps) => {
 };
 ```
 
-Why?: We encapsulate the ball logic in its own component to keep our code modular and reusable. The Ball component will handle positioning itself on the screen and responding to clicks.
+Why?: We encapsulate the asteroid logic in its own component to keep our code modular and reusable. The Asteroid component will handle positioning itself on the screen and responding to clicks.
 
 ## Step 2: Set Up the Game State in ReactionSpeedChallenge
 
-Next, we set up the core game logic in the ReactionSpeedChallenge component. We'll use createSignal to manage state for the ball's position, score, remaining time, game over status, and game start status.
+Next, we set up the core game logic in the ReactionSpeedChallenge component. We'll use createSignal to manage state for the asteroid's position, score, remaining time, game over status, and game start status.
 
 ```typescript
 const ReactionSpeedChallenge=()=> {
-  const [ball, setBall] = createSignal<{
+  const [asteroid, setAsteroid] = createSignal<{
     id: number;
     position: Position;
   } | null>(null);
@@ -44,7 +44,7 @@ const ReactionSpeedChallenge=()=> {
   const [isStarted, setIsStarted] = createSignal(false);
 ```
 
-Why?: We need these state variables to control the game's flow—keeping track of the current ball's position, the player's score, how much time is left, whether the game is over, and whether the game has started.
+Why?: We need these state variables to control the game's flow—keeping track of the current asteroid's position, the player's score, how much time is left, whether the game is over, and whether the game has started.
 
 ## Step 3: Fetch the challenge from the backend
 
@@ -80,21 +80,21 @@ const challenge = createAsync(() =>
 
 Why?: Fetching the challenge data from the backend ensures that we have the most up-to-date information for the challenge. By using createAsync, we can handle the asynchronous nature of network requests and manage the loading and error states effectively, ensuring a smooth user experience.
 
-## Step 4: Generate a Random Ball
+## Step 4: Generate a Random Asteroid
 
 ```typescript
-const generateBall = () => {
+const generateAsteroid = () => {
   if (!gameOver()) {
-    const ballId = Math.random();
-    setBall({
-      id: ballId,
+    const asteroidId = Math.random();
+    setAsteroid({
+      id: asteroidId,
       position: { left: Math.random() * 90, top: Math.random() * 80 },
     });
   }
 };
 ```
 
-Why?: This function generates a new ball at a random position on the screen when called, provided the game isn't over.
+Why?: This function generates a new asteroid at a random position on the screen when called, provided the game isn't over.
 
 ## Step 5: Implement the Game Timer
 
@@ -118,28 +118,28 @@ createEffect(() => {
       clearInterval(timerInterval);
     });
 
-    generateBall();
+    generateAsteroid();
   }
 });
 ```
 
 Why?: createEffect runs whenever the isStarted or gameOver signals change. It starts a timer that counts down every second, and when the time is up, it stops the game. We also clean up the timer using onCleanup to prevent memory leaks.
 
-## Step 6: Handle Ball Clicks
+## Step 6: Handle Asteroid Clicks
 
-We create a function handleBallClick that handles when the user clicks on a ball.
+We create a function handleAsteroidClick that handles when the user clicks on a asteroid.
 
 ```typescript
-const handleBallClick = (id: number) => {
-  if (ball() && ball()?.id === id) {
-    setBall(null);
+const handleAsteroidClick = (id: number) => {
+  if (asteroid() && asteroid()?.id === id) {
+    setAsteroid(null);
     setScore(score() + 1);
-    generateBall();
+    generateAsteroid();
   }
 };
 ```
 
-Why?: When a ball is clicked, we check if it's the currently active ball (by comparing IDs). If so, we increment the score, remove the current ball, and generate a new one.
+Why?: When a asteroid is clicked, we check if it's the currently active asteroid (by comparing IDs). If so, we increment the score, remove the current asteroid, and generate a new one.
 
 ## Step 7: Render the Game UI
 
@@ -156,26 +156,31 @@ Finally, we render the UI based on the current game state.
             <p>Time Left: {timeLeft()}s</p>
           </div>
           <div class="game-area">
-            {ball() && (
-              <Ball
-                position={ball()!.position}
-                onClick={() => handleBallClick(ball()!.id)}
+            <div id="stars"></div>
+            <div id="stars2"></div>
+            <div id="stars3"></div>
+            {asteroid() && (
+              <Asteroid
+                position={asteroid()!.position}
+                onClick={() => handleAsteroidClick(asteroid()!.id)}
               />
             )}
           </div>
         </>
       ) : (
-          <h2>Time is up! Your Score: {score()}</h2>
+        <h2>Time is up! Your Score: {score()}</h2>
       )}
     </div>
   ) : (
     <div class="intro-container">
       <NavBar />
-      <h1>{challenge()?.[0].challengeName}</h1>
-      <p>{challenge()?.[0].challengeDescription}</p>
-      <button type="button" onClick={() => setIsStarted(true)}>
-        Start
-      </button>
+      <Container>
+        <h1>{challenge()?.[0].challengeName}</h1>
+        <p>{challenge()?.[0].challengeDescription}</p>
+        <button type="button" onClick={() => setIsStarted(true)}>
+          Start
+        </button>
+      </Container>
     </div>
   )}
 </div>
@@ -185,23 +190,83 @@ Why?: Depending on the game state, we either show the start screen, the active g
 
 ## Step 8: Style the Game
 
-Add the necessary CSS to style the game (ReactionSpeedChallenge.css)
+Add the necessary CSS to style the game (ReactionSpeedChallenge.scss)
 
-```css
+```scss
+@function multiple-box-shadow($n) {
+  $value: "#{random(2000)}px #{random(2000)}px #FFF";
+  @for $i from 2 through $n {
+    $value: "#{$value}, #{random(2000)}px #{random(2000)}px #FFF";
+  }
+  @return unquote($value);
+}
+
+$shadows-small: multiple-box-shadow(700);
+$shadows-medium: multiple-box-shadow(200);
+$shadows-big: multiple-box-shadow(100);
+
+@mixin star-style($size, $shadow, $animation-duration) {
+  width: $size;
+  height: $size;
+  background: transparent;
+  box-shadow: $shadow;
+  animation: animStar $animation-duration linear infinite;
+
+  &:after {
+    content: " ";
+    position: absolute;
+    top: 2000px;
+    width: $size;
+    height: $size;
+    background: transparent;
+    box-shadow: $shadow;
+  }
+}
+
+#title {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  color: #fff;
+  text-align: center;
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
+  font-size: 50px;
+  letter-spacing: 10px;
+  margin-top: -60px;
+  padding-left: 10px;
+
+  span {
+    background: -webkit-linear-gradient(white, #38495a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+// Keyframes for star animation
+@keyframes animStar {
+  from {
+    transform: translateY(0px);
+  }
+  to {
+    transform: translateY(-2000px);
+  }
+}
+
 .game-area {
   position: relative;
   width: 100%;
-  height: 90vh;
+  height: 100vh;
   overflow: hidden;
-  background-image: wheat;
+  background-color: black;
 }
 
-.ball {
+.asteroid {
   position: absolute;
   width: 50px;
   height: 50px;
-  background-color: #3498db;
-  border-radius: 50%;
+  background-image: url(/images/asteroid.svg);
   cursor: pointer;
   transition: all 0.5s ease;
   z-index: 50;
@@ -212,7 +277,7 @@ h1 {
 }
 
 h2 {
-  color: #e74c3c;
+  text-align: center;
 }
 
 button {
@@ -239,6 +304,87 @@ button {
   flex-direction: column;
   height: 100%;
 }
+
+#stars {
+  width: 1px;
+  height: 1px;
+  background: transparent;
+  box-shadow: $shadows-small;
+  animation: animStar 50s linear infinite;
+}
+#stars:after {
+  content: " ";
+  position: absolute;
+  top: 2000px;
+  width: 1px;
+  height: 1px;
+  background: transparent;
+  box-shadow: $shadows-small;
+}
+
+#stars2 {
+  width: 2px;
+  height: 2px;
+  background: transparent;
+  box-shadow: $shadows-medium;
+  animation: animStar 100s linear infinite;
+}
+#stars2:after {
+  content: " ";
+  position: absolute;
+  top: 2000px;
+  width: 2px;
+  height: 2px;
+  background: transparent;
+  box-shadow: $shadows-medium;
+}
+
+#stars3 {
+  width: 3px;
+  height: 3px;
+  background: transparent;
+  box-shadow: $shadows-big;
+  animation: animStar 150s linear infinite;
+}
+#stars3:after {
+  content: " ";
+  position: absolute;
+  top: 2000px;
+  width: 3px;
+  height: 3px;
+  background: transparent;
+  box-shadow: $shadows-big;
+}
+
+#title {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  color: #fff;
+  text-align: center;
+  font-family: "lato", sans-serif;
+  font-weight: 300;
+  font-size: 50px;
+  letter-spacing: 10px;
+  margin-top: -60px;
+  padding-left: 10px;
+}
+#title span {
+  background: -webkit-linear-gradient(white, #38495a);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes animStar {
+  from {
+    transform: translateY(0px);
+  }
+  to {
+    transform: translateY(-2000px);
+  }
+}
 ```
 
 ## Step 9: Utilize the component
@@ -247,7 +393,7 @@ Use the component in the route 'reaction-speed-challenge'
 
 ## Step 10: Time to test
 
-Once you’ve set up all the components and styles, it’s time to test the game. Click the "Start" button to begin the challenge. Try to click on the balls as quickly as possible to score points before the timer runs out. Ensure that the balls appear in random positions, the timer counts down correctly, and the game transitions smoothly between active and game-over states.
+Once you’ve set up all the components and styles, it’s time to test the game. Click the "Start" button to begin the challenge. Try to click on the asteroids as quickly as possible to score points before the timer runs out. Ensure that the asteroids appear in random positions, the timer counts down correctly, and the game transitions smoothly between active and game-over states.
 
 ## Step 11: Save the score in the backend
 

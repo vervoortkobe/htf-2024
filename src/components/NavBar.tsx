@@ -1,27 +1,30 @@
 import { getUser, logout } from "~/api";
 import "./NavBar.css";
 import { A, createAsync } from "@solidjs/router";
+import Container from "./Container";
 
 const NavBar = () => {
   const user = createAsync(async () => getUser(), { deferStream: true });
   return (
     <>
       {user() && (
-        <A href="/">
-          <div class="container">
-            <img
-              class="logo"
-              src="../../logo_htf.webp"
-              alt="Space Cadet Program"
-            />
-            Hello {user()!.username} 👋
+        <div class="wrapper">
+          <Container>
             <form action={logout} method="post">
+              <A href="/">
+                <img
+                  class="logo"
+                  src="../../logo_htf.webp"
+                  alt="Space Cadet Program"
+                />
+              </A>
+              Hello {user()!.username} 👋
               <button name="logout" type="submit">
                 Logout
               </button>
             </form>
-          </div>
-        </A>
+          </Container>
+        </div>
       )}
     </>
   );
