@@ -15,7 +15,7 @@ zetten, bevat deze repository een starter project in [SolidStart](https://start.
 
 ```
 npm run drizzle:migrate
-tsx drizzle/seed.ts
+npx tsx drizzle/seed.ts
 npm run dev
 ```
 
