@@ -1,7 +1,7 @@
 "use server";
 import { redirect } from "@solidjs/router";
 import { useSession } from "vinxi/http";
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { db } from "./db";
 import { Argon2id } from "oslo/password";
 import { Challenges, UserChallenges, Users } from "../../drizzle/schema";
@@ -99,7 +99,23 @@ export async function getUser() {
 }
 
 export async function getChallenges() {
-  return db.select().from(Challenges).all();
+  const user = await getUser();
+  return db
+    .select({
+      id: Challenges.id,
+      name: Challenges.name,
+      description: Challenges.description,
+      completed: UserChallenges.score,
+    })
+    .from(Challenges)
+    .leftJoin(
+      UserChallenges,
+      and(
+        eq(Challenges.id, UserChallenges.challengeId),
+        eq(UserChallenges.userId, user.id)
+      )
+    )
+    .all();
 }
 
 export async function getChallenge(challengeId: number) {
@@ -131,6 +147,39 @@ export async function upsertUserChallenge(challengeId: number, score: number) {
     .values({ userId: userId, challengeId, score })
     .onConflictDoUpdate({
       target: [UserChallenges.userId, UserChallenges.challengeId],
-      set: { score },
+      set: {
+        score: sql`CASE 
+          WHEN ${UserChallenges.score} IS NULL OR ${score} > ${UserChallenges.score} 
+          THEN ${score} 
+          ELSE ${UserChallenges.score} 
+        END`,
+      },
     });
+}
+
+export async function getLeaderboard() {
+  return db
+    .select({
+      username: Users.username,
+      challengeName: Challenges.name,
+      score: UserChallenges.score,
+    })
+    .from(UserChallenges)
+    .innerJoin(Users, eq(UserChallenges.userId, Users.id))
+    .innerJoin(Challenges, eq(UserChallenges.challengeId, Challenges.id))
+    .orderBy(desc(UserChallenges.score))
+    .limit(10); // Optionally order by score
+}
+
+export async function getGlobalLeaderboard() {
+  return db
+    .select({
+      username: Users.username,
+      totalScore: sql`SUM(${UserChallenges.score})`.as("totalScore"), // Calculate the total score
+    })
+    .from(Users)
+    .leftJoin(UserChallenges, eq(Users.id, UserChallenges.userId))
+    .groupBy(Users.username) // Group by username to sum their scores
+    .orderBy(desc(sql`SUM(${UserChallenges.score})`)) // Sort by total score
+    .limit(10); // Top 10 users by total score
 }

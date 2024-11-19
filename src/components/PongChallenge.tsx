@@ -9,7 +9,7 @@ import Container from "./Container";
 interface BallOptions {
   x?: number;
   y?: number;
-  radius?: number;
+  size?: number;
   velocity?: number;
   color?: string;
   angle?: number;
@@ -23,28 +23,37 @@ interface PaddleOptions {
   color?: string;
 }
 
-class Ball {
+class Asteroid {
   private ctx: CanvasRenderingContext2D;
   private x: number;
   private y: number;
-  private radius: number;
+  private size: number;
   private velocity: number;
+  private speedMultiplier: number;
   private color: string;
   private angle: number;
   private moveX: number;
   private moveY: number;
+  private image: HTMLImageElement;
 
   constructor(ctx: CanvasRenderingContext2D, options: BallOptions = {}) {
     if (!ctx) throw "Canvas context not provided as first param";
     this.ctx = ctx;
     this.x = options.x || 50;
     this.y = options.y || 50;
-    this.radius = options.radius || 50;
+    this.size = options.size || 1;
     this.velocity = options.velocity || 51;
+    this.speedMultiplier = 1;
     this.color = options.color || "red";
     this.angle = options.angle || 45;
     this.moveX = Math.cos((Math.PI / 180) * this.angle) * this.velocity;
     this.moveY = Math.sin((Math.PI / 180) * this.angle) * this.velocity;
+
+    // Load the asteroid image
+    this.image = new Image();
+    this.image.src = "/images/custom_asteroid.png";
+    this.image.width = this.size / 2;
+    this.image.height = this.size / 2;
   }
 
   getX(): number {
@@ -54,7 +63,7 @@ class Ball {
     return this.y;
   }
   getRadius(): number {
-    return this.radius;
+    return this.size / 2;
   }
   getMoveX(): number {
     return this.moveX;
@@ -69,19 +78,33 @@ class Ball {
     this.moveY = val;
   }
 
+  increaseSpeed(): void {
+    this.speedMultiplier += 0.001;
+    this.moveX =
+      Math.sign(this.moveX) * Math.abs(this.moveX) * this.speedMultiplier;
+    this.moveY =
+      Math.sign(this.moveY) * Math.abs(this.moveY) * this.speedMultiplier;
+  }
+
   draw(): void {
-    this.ctx.beginPath();
-    this.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    this.ctx.fillStyle = this.color;
-    this.ctx.fill();
-    this.ctx.closePath();
+    this.ctx.save();
+    this.ctx.translate(this.x, this.y);
+    this.ctx.rotate(performance.now() / 1000); // Rotate the asteroid over time
+    this.ctx.drawImage(
+      this.image,
+      -this.size / 2,
+      -this.size / 2,
+      this.size,
+      this.size
+    );
+    this.ctx.restore();
   }
 
   update(canvasWidth: number, canvasHeight: number): void {
-    if (this.x + this.radius >= canvasWidth || this.x < this.radius) {
+    if (this.x + this.size / 2 >= canvasWidth || this.x - this.size / 2 < 0) {
       this.moveX *= -1;
     }
-    if (this.y + this.radius >= canvasHeight || this.y < this.radius) {
+    if (this.y + this.size / 2 >= canvasHeight || this.y - this.size / 2 < 0) {
       this.moveY *= -1;
     }
     this.x += this.moveX;
@@ -140,7 +163,7 @@ const PongChallenge = () => {
     getChallenge(ChallengesMap.pongChallenge)
   );
   const [canvas, setCanvas] = createSignal<HTMLCanvasElement | null>(null);
-  const [ball, setBall] = createSignal<Ball | null>(null);
+  const [asteroid, setAsteroid] = createSignal<Asteroid | null>(null);
   const [paddle, setPaddle] = createSignal<Paddle | null>(null);
   const [animationFrame, setAnimationFrame] = createSignal<number | null>(null);
   const [score, setScore] = createSignal(0);
@@ -196,34 +219,38 @@ const PongChallenge = () => {
 
     resize();
 
-    // Initialize game objects
     setPaddle(
       new Paddle(ctx, {
-        x: 100,
+        x: 200,
         width: 5,
         height: 100,
-        color: "green",
+        color: "red",
       })
     );
 
-    setBall(
-      new Ball(ctx, {
+    setAsteroid(
+      new Asteroid(ctx, {
         x: currentCanvas.width / 2,
         y: currentCanvas.height / 2,
-        radius: 10,
-        velocity: 10,
+        size: 50,
+        velocity: 15,
         color: "pink",
         angle: 45,
       })
     );
 
-    // Set up event listeners
     window.addEventListener("resize", resize);
     window.addEventListener("mousemove", handleMouseMove);
+
+    const frame = requestAnimationFrame(animate);
+    setAnimationFrame(frame);
 
     onCleanup(() => {
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", handleMouseMove);
+      if (animationFrame()) {
+        cancelAnimationFrame(animationFrame()!);
+      }
     });
   });
 
@@ -233,29 +260,31 @@ const PongChallenge = () => {
 
   const animate = () => {
     const currentCanvas = canvas();
-    const currentBall = ball();
+    const currentAsteroid = asteroid();
     const currentPaddle = paddle();
 
-    if (!currentCanvas || !currentBall || !currentPaddle || gameOver()) return;
+    if (!currentCanvas || !currentAsteroid || !currentPaddle || gameOver())
+      return;
 
     const ctx = currentCanvas.getContext("2d");
     if (!ctx) return;
 
     clear(ctx, currentCanvas);
-    currentBall.draw();
-    currentBall.update(currentCanvas.width, currentCanvas.height);
+    currentAsteroid.draw();
+    currentAsteroid.update(currentCanvas.width, currentCanvas.height);
     currentPaddle.draw();
 
     // Collision detection
     if (
       currentPaddle.getX() + currentPaddle.getWidth() >=
-        currentBall.getX() - currentBall.getRadius() &&
-      currentBall.getY() >= currentPaddle.getY() &&
-      currentBall.getY() + currentBall.getRadius() <=
+        currentAsteroid.getX() - currentAsteroid.getRadius() &&
+      currentAsteroid.getY() >= currentPaddle.getY() &&
+      currentAsteroid.getY() + currentAsteroid.getRadius() <=
         currentPaddle.getY() + currentPaddle.getHeight()
     ) {
-      currentBall.setMoveX(currentBall.getMoveX() * -1);
-      currentBall.setMoveY(currentBall.getMoveY() * -1);
+      currentAsteroid.setMoveX(currentAsteroid.getMoveX() * -1);
+      currentAsteroid.setMoveY(currentAsteroid.getMoveY() * -1);
+      currentAsteroid.increaseSpeed(); // Increase speed on paddle hit
       incrementScore();
     }
 
@@ -267,6 +296,9 @@ const PongChallenge = () => {
     <div>
       {isStarted() ? (
         <div class="game-container">
+          <div id="stars"></div>
+          <div id="stars2"></div>
+          <div id="stars3"></div>
           {!gameOver() ? (
             <>
               <div class="score-card">

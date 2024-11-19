@@ -1,20 +1,22 @@
 import { useSubmission, type RouteSectionProps } from "@solidjs/router";
-import { Show } from "solid-js";
+import { Show, createSignal } from "solid-js";
 import { loginOrRegister } from "~/api";
 import Container from "~/components/Container";
+import "./login.scss";
 
 export default function LoginRoute(props: RouteSectionProps) {
   const loggingIn = useSubmission(loginOrRegister);
+  const [loginType, setLoginType] = createSignal("login");
 
   return (
     <Container>
-      <img
-        class="logo-login"
-        src="../../logo_htf.webp"
-        alt="Space Cadet Program"
-      />
-      <h1>Space Cadet Program</h1>
       <form action={loginOrRegister} method="post" class="login-form">
+        <img
+          class="logo-login"
+          src="../../logo_htf.webp"
+          alt="Space Cadet Program"
+        />
+        <h1>Space Cadet Program</h1>
         <input
           type="hidden"
           name="redirectTo"
@@ -22,11 +24,24 @@ export default function LoginRoute(props: RouteSectionProps) {
         />
         <fieldset>
           <label>
-            <input type="radio" name="loginType" value="login" checked={true} />
+            <input 
+              type="radio" 
+              name="loginType" 
+              value="login" 
+              checked={loginType() === "login"} 
+              onChange={(e) => setLoginType(e.currentTarget.value)}
+            />
             Login
           </label>
           <label>
-            <input type="radio" name="loginType" value="register" /> Register
+            <input 
+              type="radio" 
+              name="loginType" 
+              value="register" 
+              checked={loginType() === "register"}
+              onChange={(e) => setLoginType(e.currentTarget.value)}
+            />
+            Register
           </label>
         </fieldset>
         <div class="input-container">
@@ -41,7 +56,9 @@ export default function LoginRoute(props: RouteSectionProps) {
             autocomplete="current-password"
           />
         </div>
-        <button id="login-button" type="submit">Login</button>
+        <button id="login-button" type="submit">
+          {loginType() === "login" ? "Login" : "Register"}
+        </button>
         <Show when={loggingIn.result}>
           <p style={{ color: "red" }} role="alert" id="error-message">
             {loggingIn.result!.message}

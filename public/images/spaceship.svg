@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Main body -->
+  <path d="M100 20 L160 160 L100 130 L40 160 Z" fill="#4a90e2" stroke="#2171cd" stroke-width="4"/>
+  <!-- Cockpit -->
+  <circle cx="100" cy="80" r="20" fill="#2171cd"/>
+  <!-- Wings -->
+  <path d="M70 100 L20 140 L70 120 Z" fill="#4a90e2" stroke="#2171cd" stroke-width="4"/>
+  <path d="M130 100 L180 140 L130 120 Z" fill="#4a90e2" stroke="#2171cd" stroke-width="4"/>
+  <!-- Engine glow -->
+  <circle cx="100" cy="150" r="10" fill="#ff9f43"/>
+</svg>
