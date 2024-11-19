@@ -64,7 +64,11 @@
   height: 100vh;
   overflow: hidden;
   padding: 20px;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9));
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.7),
+    rgba(0, 0, 0, 0.9)
+  );
 }
 
 .leaderboard-content {
@@ -75,8 +79,9 @@
 }
 
 .leaderboard-section {
+  width: 20vw;
   flex: 1;
-  min-height: 0; 
+  min-height: 0;
   display: flex;
   flex-direction: column;
   background: rgba(255, 255, 255, 0.05);
@@ -85,18 +90,18 @@
   padding: 2rem;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  
+
   .section-header {
     display: flex;
     align-items: center;
     gap: 1rem;
     margin-bottom: 15px;
-    
+
     i {
       font-size: 2rem;
       color: #64ffda;
     }
-    
+
     h1 {
       color: white;
       font-size: 2rem;
@@ -113,7 +118,7 @@
   gap: 1rem;
   padding: 3rem;
   color: rgba(255, 255, 255, 0.8);
-  
+
   .loading-spinner {
     width: 40px;
     height: 40px;
@@ -126,26 +131,26 @@
 
 .leaderboard-table-container {
   flex: 1;
-  min-height: 0; 
+  min-height: 0;
   overflow-y: auto;
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.2);
-  
+
   table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0 8px;
   }
-  
+
   thead {
     position: sticky;
     top: 0;
     background: #1a1a1a;
     z-index: 1;
-    
+
     tr {
       background: transparent;
-      
+
       th {
         color: rgba(255, 255, 255, 0.6);
         font-weight: 500;
@@ -154,102 +159,120 @@
         padding: 1rem;
         text-align: left;
         font-size: 0.9rem;
-        
+
         &.rank-header {
           width: 80px;
         }
       }
     }
   }
-  
+
   tbody {
     tr {
       background: rgba(255, 255, 255, 0.03);
       transition: transform 0.3s ease, background-color 0.3s ease;
-      
+
       &:hover {
         background: rgba(255, 255, 255, 0.08);
         transform: translateX(5px);
       }
-      
+
       td {
         padding: 1rem;
         color: rgba(255, 255, 255, 0.9);
-        
+
         &:first-child {
           border-top-left-radius: 8px;
           border-bottom-left-radius: 8px;
         }
-        
+
         &:last-child {
           border-top-right-radius: 8px;
           border-bottom-right-radius: 8px;
         }
       }
-      
+
       &.top-1 {
-        background: linear-gradient(45deg, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0.05));
-        .trophy-1 { color: #FFD700; }
+        background: linear-gradient(
+          45deg,
+          rgba(255, 215, 0, 0.15),
+          rgba(255, 215, 0, 0.05)
+        );
+        .trophy-1 {
+          color: #ffd700;
+        }
       }
-      
+
       &.top-2 {
-        background: linear-gradient(45deg, rgba(192, 192, 192, 0.15), rgba(192, 192, 192, 0.05));
-        .trophy-2 { color: #C0C0C0; }
+        background: linear-gradient(
+          45deg,
+          rgba(192, 192, 192, 0.15),
+          rgba(192, 192, 192, 0.05)
+        );
+        .trophy-2 {
+          color: #c0c0c0;
+        }
       }
-      
+
       &.top-3 {
-        background: linear-gradient(45deg, rgba(205, 127, 50, 0.15), rgba(205, 127, 50, 0.05));
-        .trophy-3 { color: #CD7F32; }
+        background: linear-gradient(
+          45deg,
+          rgba(205, 127, 50, 0.15),
+          rgba(205, 127, 50, 0.05)
+        );
+        .trophy-3 {
+          color: #cd7f32;
+        }
       }
     }
-    
+
     .rank {
       font-weight: 600;
       text-align: center;
       font-size: 1.1rem;
-      
+
       i {
         font-size: 1.4rem;
       }
     }
-    
+
     .username {
       display: flex;
       align-items: center;
       gap: 0.8rem;
       font-weight: 500;
-      
+
       i {
         color: #64ffda;
         font-size: 1.1rem;
       }
     }
-    
+
     .score {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      
+
       .score-value {
         font-weight: 600;
         font-size: 1.1rem;
         color: #64ffda;
       }
-      
+
       .score-label {
         color: rgba(255, 255, 255, 0.6);
         font-size: 0.9rem;
       }
     }
-    
+
     .challenge-name {
       display: flex;
       align-items: center;
       gap: 0.8rem;
       color: rgba(255, 255, 255, 0.9);
-      
+
       i {
-        color: #FF6B6B;
+        color: #ff6b6b;
       }
     }
   }
@@ -264,28 +287,29 @@
 @media (max-width: 768px) {
   .leaderboard-section {
     padding: 1.5rem;
-    
+
     .section-header {
       h1 {
         font-size: 1.5rem;
       }
-      
+
       i {
         font-size: 1.5rem;
       }
     }
   }
-  
+
   .leaderboard-table-container {
-    th, td {
+    th,
+    td {
       padding: 0.8rem !important;
       font-size: 0.9rem !important;
     }
-    
+
     .score-value {
       font-size: 1rem !important;
     }
-    
+
     .score-label {
       display: none;
     }
